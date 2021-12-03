@@ -1,0 +1,23 @@
+(defun aoc-most-common-bit (n)
+  (let ((line-count (count-lines (point-min) (point-max))))
+    (if (>= n (/ line-count 2)) "1" "0")))
+
+(defun aoc-least-common-bit (n)
+  (let ((line-count (count-lines (point-min) (point-max))))
+    (if (>= n (/ line-count 2)) "0" "1")))
+
+(defun aoc-calc-power-consumption ()
+  "Calculate power consumption using diagnostic report"
+  (interactive)
+  (beginning-of-buffer)
+  (let ((sums [0 0 0 0 0 0 0 0 0 0 0 0]))
+    (while (not (eobp))
+      (beginning-of-line)
+      (dotimes (col 12)
+               (let ((n (string-to-number (string (char-after (point))))))
+                 (aset sums col (+ n (aref sums col))))
+               (forward-char 1))
+      (forward-line 1))
+    (let ((gamma-rate (string-to-number (mapconcat 'aoc-most-common-bit sums "") 2))
+          (epsilon-rate (string-to-number (mapconcat 'aoc-least-common-bit sums "") 2)))
+      (message "%s" (* gamma-rate epsilon-rate)))))
