@@ -17,10 +17,13 @@
 (defun aoc-compute-fuel-cost (positions dest)
   (seq-reduce #'+ (seq-map (lambda (p) (abs (- p dest))) positions) 0))
 
+(defun aoc-fuel-sum (pos)
+  (seq-reduce #'+ (number-sequence 0 pos) 0))
+
 (defun aoc-compute-fuel-cost-two (positions)
   (seq-min
    (seq-map
-    (lambda (dest) (seq-reduce (lambda (acc p) (+ (fuel-sum (abs (- p dest))) acc)) positions 0))
+    (lambda (dest) (seq-reduce (lambda (acc p) (+ (aoc-fuel-sum (abs (- p dest))) acc)) positions 0))
     ;; using the mean as the destination point worked for the example but not for my real input
     ;; so i'm just using it to generate a likely range for a more brute-force type solution
     ;; of computing all the fuel costs and picking the min
@@ -29,20 +32,12 @@
 (defun aoc-organize-crab-submarines ()
   (interactive)
   (let ((crabs (aoc-get-crab-positions))
-        (buf (get-buffer-create "aoc-day-seven")))
+        (buf (get-buffer-create "aoc-day-seven"))
+        (part (read-string "problem part # (1 or 2): ")))
     (select-window (split-window-vertically))
     (switch-to-buffer buf)
     (erase-buffer)
-    (insert (format "%s" (aoc-compute-fuel-cost crabs (aoc-pick-the-middle crabs))))))
-
-(defun aoc-organize-crab-submarines-two ()
-  (interactive)
-  (let ((crabs (aoc-get-crab-positions))
-        (buf (get-buffer-create "aoc-day-seven")))
-    (select-window (split-window-vertically))
-    (switch-to-buffer buf)
-    (erase-buffer)
-    (insert (format "%d\n" (aoc-compute-fuel-cost-two crabs)))))
-
-(defun fuel-sum (pos)
-  (seq-reduce #'+ (number-sequence 0 pos) 0))
+    (let ((fuel-cost (if (equal part "1")
+                         (aoc-compute-fuel-cost crabs (aoc-pick-the-middle crabs))
+                       (aoc-compute-fuel-cost-two crabs))))
+      (insert (format "Fuel cost for Part %s: %d" part fuel-cost)))))
