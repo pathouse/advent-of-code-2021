@@ -1,0 +1,5 @@
+TEST:
+target area: x=20..30, y=-10..-5
+
+ACTUAL:
+target area: x=70..96, y=-179..-124
